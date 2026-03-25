@@ -60,7 +60,7 @@ async function main() {
 
     const { error } = await supabase
       .from("anime")
-      .upsert(batch, { onConflict: "mal_id", ignoreDuplicates: false });
+      .upsert(batch, { onConflict: "mal_id", ignoreDuplicates: true });
 
     if (error) {
       console.error(`Error at batch ${i}:`, error.message);
