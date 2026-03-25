@@ -8,7 +8,8 @@ async function getRandomPair(tag?: string) {
     .from("anime")
     .select("id", { count: "exact", head: true })
     .not("picture", "is", null)
-    .not("title", "eq", "");
+    .not("title", "eq", "")
+    .order("elo_rating", { ascending: false });
 
   if (tag) query = query.contains("tags", [tag]);
 
@@ -16,7 +17,13 @@ async function getRandomPair(tag?: string) {
   if (!count || count < 2) return null;
 
   const i = Math.floor(Math.random() * count);
-  let j = Math.floor(Math.random() * (count - 1));
+  const MAX_OFFSET = 50;
+
+  const upper = Math.min(count - 1, i + MAX_OFFSET)
+  const lower = Math.max(0, i - MAX_OFFSET)
+
+  let j = Math.floor(Math.random() * (upper - lower)) + lower;
+
   if (j >= i) j++;
 
   const fields = "id, title, picture, thumbnail, score, elo_rating, tags, studios, media_type, episodes";
@@ -25,12 +32,14 @@ async function getRandomPair(tag?: string) {
     .from("anime")
     .select(fields)
     .not("picture", "is", null)
-    .not("title", "eq", "");
+    .not("title", "eq", "")
+    .order("elo_rating", { ascending: false });
   let q2 = supabase
     .from("anime")
     .select(fields)
     .not("picture", "is", null)
-    .not("title", "eq", "");
+    .not("title", "eq", "")
+    .order("elo_rating", { ascending: false });
 
   if (tag) {
     q1 = q1.contains("tags", [tag]);
