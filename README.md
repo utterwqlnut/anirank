@@ -1,4 +1,5 @@
 # AniRank
+<img width="1248" height="857" alt="Screenshot 2026-03-25 at 2 45 31 AM" src="https://github.com/user-attachments/assets/3d7689bc-457a-4050-a48e-870ba60f3449" />
 
 A CLI-themed anime ranking app where you vote head-to-head between anime to build an Elo leaderboard. Data sourced from the [Jikan API](https://jikan.moe/) (unofficial MyAnimeList API).
 
