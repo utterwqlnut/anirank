@@ -45,10 +45,10 @@ export default function Battle() {
   }, [fetchBattle]);
 
   useEffect(() => {
-    if (!loading && inputRef.current) {
+    if (!loading && !picked && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [loading, battle]);
+  }, [loading, battle, picked]);
 
   function handleSubmit() {
     if (!battle || picked) return;
@@ -57,26 +57,29 @@ export default function Battle() {
 
     if (cmd === "l") {
       setPicked("l");
-      setTimeout(() => fetchBattle(), 600);
     } else if (cmd === "r") {
       setPicked("r");
-      setTimeout(() => fetchBattle(), 600);
     } else if (cmd === "") {
       fetchBattle();
     }
   }
 
+  useEffect(() => {
+    if (!picked) return;
+    const timer = setTimeout(() => fetchBattle(), 400);
+    return () => clearTimeout(timer);
+  }, [picked, fetchBattle]);
+
   function renderAnimeCard(a: BattleAnime, side: "l" | "r") {
     const label = side === "l" ? "[L]" : "[R]";
     const isPicked = picked === side;
-    const isNotPicked = picked && picked !== side;
+    const isNotPicked = picked !== null && picked !== side;
 
     return (
       <div
-        className={`border transition-all duration-200
-          ${isPicked ? "border-accent bg-accent/10" : ""}
-          ${isNotPicked ? "border-base-300/30 opacity-30" : ""}
-          ${!picked ? "border-base-300" : "border-base-300"}
+        className={`border transition-all duration-300
+          ${isPicked ? "border-accent bg-accent/10 scale-[1.02]" : "border-base-300"}
+          ${isNotPicked ? "opacity-30 scale-[0.98]" : ""}
         `}
       >
         {a.picture && (
@@ -152,7 +155,7 @@ export default function Battle() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSubmit();
           }}
-          disabled={!!picked}
+          disabled={!!picked || loading}
           placeholder="l / r / enter to skip"
           className="flex-1 bg-transparent outline-none text-base-content placeholder:text-base-content/30 disabled:opacity-40"
           autoFocus
