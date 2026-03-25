@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: all;
+}
+
+@plugin "daisyui/theme" {
+  name: "gruvbox";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #282828;
+  --color-base-200: #1d2021;
+  --color-base-300: #3c3836;
+  --color-base-content: #ebdbb2;
+
+  --color-primary: #fe8019;
+  --color-primary-content: #1d2021;
+
+  --color-secondary: #fabd2f;
+  --color-secondary-content: #1d2021;
+
+  --color-accent: #b8bb26;
+  --color-accent-content: #1d2021;
+
+  --color-neutral: #504945;
+  --color-neutral-content: #a89984;
+
+  --color-info: #83a598;
+  --color-info-content: #1d2021;
+
+  --color-success: #8ec07c;
+  --color-success-content: #1d2021;
+
+  --color-warning: #fabd2f;
+  --color-warning-content: #1d2021;
+
+  --color-error: #fb4934;
+  --color-error-content: #1d2021;
+
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+body {
+  font-family: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code", "Consolas", monospace;
+}
