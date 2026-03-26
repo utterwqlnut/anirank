@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build --workspace=web",
+  "outputDirectory": "web/dist",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" }
+  ],
+  "crons": [
+    { "path": "/api/cron/seed", "schedule": "0 3 * * *" }
+  ]
+}
