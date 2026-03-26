@@ -46,7 +46,7 @@ async function getRandomPair(tag?: string) {
   const { count } = await query;
   if (!count || count < 2) return null;
 
-  const bias = 2;
+  const bias = 4;
   const i = Math.floor(Math.pow(Math.random(), bias) * count);
   const MAX_OFFSET = 50;
 
