@@ -24,6 +24,7 @@ export default function Battle() {
   const [loading, setLoading] = useState(true);
   const [picked, setPicked] = useState<"l" | "r" | null>(null);
   const [input, setInput] = useState("");
+  const [totalBattles, setTotalBattles] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchBattle = useCallback(async () => {
@@ -40,9 +41,17 @@ export default function Battle() {
     }
   }, []);
 
+  const fetchCount = useCallback(async () => {
+    try {
+      const res = await apiFetch<{ total: number }>("/battle/count");
+      setTotalBattles(res.total);
+    } catch {}
+  }, []);
+
   useEffect(() => {
     fetchBattle();
-  }, [fetchBattle]);
+    fetchCount();
+  }, [fetchBattle, fetchCount]);
 
   useEffect(() => {
     if (!loading && !picked && inputRef.current) {
@@ -57,8 +66,24 @@ export default function Battle() {
 
     if (cmd === "l") {
       setPicked("l");
+      setTotalBattles((n) => (n ?? 0) + 1);
+      apiFetch("/battle", {
+        method: "POST",
+        body: JSON.stringify({
+          winner_id: battle.anime1.id,
+          loser_id: battle.anime2.id,
+        }),
+      }).catch(console.error);
     } else if (cmd === "r") {
       setPicked("r");
+      setTotalBattles((n) => (n ?? 0) + 1);
+      apiFetch("/battle", {
+        method: "POST",
+        body: JSON.stringify({
+          winner_id: battle.anime2.id,
+          loser_id: battle.anime1.id,
+        }),
+      }).catch(console.error);
     } else if (cmd === "") {
       fetchBattle();
     }
@@ -133,12 +158,19 @@ export default function Battle() {
 
   return (
     <div className="text-sm">
-      <p className="text-base-content/70 mb-4">
-        <span className="text-accent">?</span> Which anime do you prefer?
-        <span className="text-base-content/50 ml-2">
-          (type <span className="text-primary">l</span> or <span className="text-primary">r</span>, enter to skip)
-        </span>
-      </p>
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-base-content/70">
+          <span className="text-accent">?</span> Which anime do you prefer?
+          <span className="text-base-content/50 ml-2">
+            (type <span className="text-primary">l</span> or <span className="text-primary">r</span>, enter to skip)
+          </span>
+        </p>
+        {totalBattles != null && (
+          <span className="text-xs text-base-content/60 tabular-nums">
+            [{totalBattles.toLocaleString()} battles]
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {renderAnimeCard(battle.anime1, "l")}

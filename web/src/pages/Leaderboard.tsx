@@ -125,7 +125,7 @@ export default function Leaderboard() {
                         </div>
                       </td>
                       <td className="text-right text-primary font-bold tabular-nums">
-                        {Math.round(a.elo_rating)}
+                        {a.elo_rating}
                       </td>
                       <td className="text-right text-secondary tabular-nums">
                         {a.score != null ? a.score.toFixed(1) : " — "}

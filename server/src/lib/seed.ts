@@ -12,6 +12,9 @@ function parseDuration(dur: string | null): number | null {
 }
 
 function toRow(entry: JikanAnime) {
+  const maxRate = 2000;
+  const minRate = 500;
+  const defaultScore = 5;
   return {
     mal_id: entry.mal_id,
     title: entry.title,
@@ -22,6 +25,7 @@ function toRow(entry: JikanAnime) {
     airing_status: entry.status || null,
     season: entry.season || null,
     season_year: entry.year || null,
+    elo_rating: Math.round((entry.score ?? defaultScore) / 10 * (maxRate - minRate) + minRate),
     picture: entry.images?.jpg?.large_image_url || entry.images?.jpg?.image_url || null,
     thumbnail: entry.images?.jpg?.small_image_url || entry.images?.jpg?.image_url || null,
     duration_secs: parseDuration(entry.duration),
