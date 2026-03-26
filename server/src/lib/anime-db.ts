@@ -67,7 +67,7 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Response> {
 }
 
 export async function fetchTopAnimePage(page: number): Promise<JikanPaginatedResponse> {
-  const url = `${JIKAN_BASE}/top/anime?page=${page}&limit=25&filter=bypopularity`;
+  const url = `${JIKAN_BASE}/top/anime?page=${page}&limit=25`;
   const res = await fetchWithRetry(url);
   return res.json();
 }

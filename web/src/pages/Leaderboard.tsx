@@ -5,6 +5,7 @@ import TagFilter from "../components/TagFilter";
 interface Anime {
   id: number;
   title: string;
+  title_english: string | null;
   picture: string | null;
   thumbnail: string | null;
   score: number | null;
@@ -120,7 +121,7 @@ export default function Leaderboard() {
                             />
                           )}
                           <span className="truncate text-base-content">
-                            {a.title}
+                            {a.title_english || a.title}
                           </span>
                         </div>
                       </td>

@@ -38,39 +38,43 @@ async function getRandomPair(tag?: string) {
     .from("anime")
     .select("id", { count: "exact", head: true })
     .not("picture", "is", null)
-    .not("title", "eq", "")
-    .order("elo_rating", { ascending: false });
+    .not("title", "eq", "");
 
   if (tag) query = query.contains("tags", [tag]);
 
   const { count } = await query;
   if (!count || count < 2) return null;
 
-  const bias = 4;
-  const i = Math.floor(Math.pow(Math.random(), bias) * count);
-  const MAX_OFFSET = 50;
+  const cutoff = 0.01;
+  const steepness = 100;
 
-  const upper = Math.min(count - 1, i + MAX_OFFSET)
-  const lower = Math.max(0, i - MAX_OFFSET)
+  function sampleIndex(n: number): number {
+    while (true) {
+      const x = Math.floor(Math.random() * n);
+      const acceptance = 1 / (1 + Math.exp(steepness * (x / n - cutoff)));
+      if (Math.random() < acceptance) return x;
+    }
+  }
 
-  let j = Math.floor(Math.random() * (upper - lower)) + lower;
+  let i = sampleIndex(count);
+  let j = sampleIndex(count - 1);
+  if (j >= i) j += 1;
 
-  if (j >= i) j++;
+  console.log(`[battle] count=${count} i=${i} j=${j}`);
 
-  const fields = "id, title, picture, thumbnail, score, elo_rating, tags, studios, media_type, episodes";
+  const fields = "id, title, title_english, picture, thumbnail, score, elo_rating, tags, studios, media_type, episodes";
 
   let q1 = supabase
     .from("anime")
     .select(fields)
     .not("picture", "is", null)
     .not("title", "eq", "")
-    .order("elo_rating", { ascending: false });
+
   let q2 = supabase
     .from("anime")
     .select(fields)
     .not("picture", "is", null)
     .not("title", "eq", "")
-    .order("elo_rating", { ascending: false });
 
   if (tag) {
     q1 = q1.contains("tags", [tag]);
@@ -85,16 +89,6 @@ async function getRandomPair(tag?: string) {
   if (res1.error || res2.error || !res1.data || !res2.data) return null;
   return { anime1: res1.data, anime2: res2.data };
 }
-
-battle.get("/count", async (c) => {
-  const { data, error } = await supabase
-    .from("anime")
-    .select("num_matches.sum()");
-
-  if (error || !data?.[0]) return c.json({ total: 0 });
-  const sum = (data[0] as any).sum ?? 0;
-  return c.json({ total: Math.floor(sum / 2) });
-});
 
 battle.get("/", async (c) => {
   const tag = c.req.query("tag");

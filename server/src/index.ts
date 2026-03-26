@@ -16,6 +16,6 @@ serve({ fetch: app.fetch, port });
 
 cron.schedule("0 3 * * *", () => {
   console.log("[cron] Daily seed started");
-  seedAnime(200).catch((err) => console.error("[cron] Seed failed:", err));
+  seedAnime(40).catch((err) => console.error("[cron] Seed failed:", err));
 });
 console.log("Daily seed scheduled at 3:00 AM");

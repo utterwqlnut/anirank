@@ -47,10 +47,11 @@ Run the contents of `server/src/db/schema.sql` in your Supabase SQL Editor.
 npm run seed --workspace=server
 ```
 
-This fetches the top ~5000 anime from Jikan and upserts them into Supabase. Takes a few minutes due to rate limits. For a quicker test:
+This fetches the top ~5000 anime by MAL score from Jikan and upserts them into Supabase. Takes a few minutes due to rate limits. You can pass a page count (25 anime per page):
 
 ```bash
-npx tsx server/src/scripts/seed-anime.ts 10
+npm run seed --workspace=server -- 40   # ~1000 anime
+npm run seed --workspace=server -- 10   # ~250 anime (quick test)
 ```
 
 ### 5. Run the app

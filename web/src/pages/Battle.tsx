@@ -4,6 +4,7 @@ import { apiFetch } from "../lib/api";
 interface BattleAnime {
   id: number;
   title: string;
+  title_english: string | null;
   picture: string | null;
   thumbnail: string | null;
   score: number | null;
@@ -24,7 +25,6 @@ export default function Battle() {
   const [loading, setLoading] = useState(true);
   const [picked, setPicked] = useState<"l" | "r" | null>(null);
   const [input, setInput] = useState("");
-  const [totalBattles, setTotalBattles] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchBattle = useCallback(async () => {
@@ -41,17 +41,9 @@ export default function Battle() {
     }
   }, []);
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const res = await apiFetch<{ total: number }>("/battle/count");
-      setTotalBattles(res.total);
-    } catch {}
-  }, []);
-
   useEffect(() => {
     fetchBattle();
-    fetchCount();
-  }, [fetchBattle, fetchCount]);
+  }, [fetchBattle]);
 
   useEffect(() => {
     if (!loading && !picked && inputRef.current) {
@@ -66,7 +58,6 @@ export default function Battle() {
 
     if (cmd === "l") {
       setPicked("l");
-      setTotalBattles((n) => (n ?? 0) + 1);
       apiFetch("/battle", {
         method: "POST",
         body: JSON.stringify({
@@ -76,7 +67,6 @@ export default function Battle() {
       }).catch(console.error);
     } else if (cmd === "r") {
       setPicked("r");
-      setTotalBattles((n) => (n ?? 0) + 1);
       apiFetch("/battle", {
         method: "POST",
         body: JSON.stringify({
@@ -108,11 +98,11 @@ export default function Battle() {
         `}
       >
         {a.picture && (
-          <img src={a.picture} alt={a.title} className="w-full h-56 object-cover" />
+          <img src={a.picture} alt={a.title_english || a.title} className="w-full h-56 object-cover" />
         )}
         <div className="p-3 space-y-1">
           <div className="text-base-content font-bold">
-            <span className="text-primary">{label}</span> {a.title}
+            <span className="text-primary">{label}</span> {a.title_english || a.title}
           </div>
           <div className="text-xs text-base-content/60">
             {[
@@ -158,18 +148,13 @@ export default function Battle() {
 
   return (
     <div className="text-sm">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <p className="text-base-content/70">
           <span className="text-accent">?</span> Which anime do you prefer?
           <span className="text-base-content/50 ml-2">
             (type <span className="text-primary">l</span> or <span className="text-primary">r</span>, enter to skip)
           </span>
         </p>
-        {totalBattles != null && (
-          <span className="text-xs text-base-content/60 tabular-nums">
-            [{totalBattles.toLocaleString()} battles]
-          </span>
-        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
